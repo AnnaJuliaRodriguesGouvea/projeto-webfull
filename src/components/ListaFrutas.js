@@ -1,16 +1,21 @@
 import React, {useEffect, useState, createContext, useContext} from 'react';
 import FruitCard from './FruitCard';
 import {findAll} from "../service/FruitService";
-import {AppContext} from "../App"; // Importe o componente FruitCard
+import {AppContext} from "../App";
+import {Pagination} from "@mui/material"; // Importe o componente FruitCard
 
 const FruitContext = createContext();
 const ListaFrutas = () => {
     const context = useContext(AppContext)
-    useEffect(() => {
-        (async () => {
-            context.setFruits(await findAll())
-        })()
-    }, []);
+    // useEffect(() => {
+    //     (async () => {
+    //         let result = await findAll()
+    //         context.setPageCount(Math.ceil(result.length / context.limit))
+    //         result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
+    //         context.setFruits(result)
+    //
+    //     })()
+    // }, [context.page, context.limit]);
   
     return (
         <div>

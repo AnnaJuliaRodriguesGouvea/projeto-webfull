@@ -6,10 +6,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import {Button, FormControlLabel, IconButton, Radio, RadioGroup, TextField} from "@mui/material";
+import {FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, Select} from "@mui/material";
 import {findAll} from "../service/FruitService";
-import {useContext} from "react";
-import {FruitContext} from "./ListaFrutas";
+import {useContext, useEffect} from "react";
 import {AppContext} from "../App";
 
 const Search = styled('div')(({ theme }) => ({
@@ -59,6 +58,7 @@ export default function Header() {
   const [searchEnabled, setSearchEnabled] = React.useState(false);
   const [selectedRadio, setSelectedRadio] = React.useState('');
   const [searchText, setSearchText] = React.useState('');
+  const [selectedLimit, setSelectedLimit] = React.useState(5);
 
   const handleRadioChange = (event) => {
     setSelectedRadio(event.target.value);
@@ -69,8 +69,19 @@ export default function Header() {
     setSearchText(event.target.value.toLowerCase());
   };
 
+  const handleSelectChange = (event) => {
+    setSelectedLimit(event.target.value)
+    context.setLimit(event.target.value)
+    context.setPage(1)
+  }
+
   const isValidFilters = () => {
-    return !(selectedRadio === '' || searchText === '')
+    return !(selectedRadio === '' || searchText === '' || context.limit < 1 || context.page < 1)
+  }
+
+  const handleSearch = async () => {
+    context.setPage(1)
+    await search()
   }
 
   const search = async () => {
@@ -87,15 +98,32 @@ export default function Header() {
           result = result.filter((fruit) => fruit.order.toLowerCase().includes(searchText));
           break;
       }
+
       if (result.length === 0) {
         console.log("Erro")
         //Apresentar erro de dados nao encontrados
       }
+      console.log(searchText)
+      context.setPageCount(Math.ceil(result.length / context.limit))
+      result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
       context.setFruits(result)
       return result
     }
    //Apresentar erro de validacao
   }
+
+  useEffect(() => {
+    (async () => {
+      if(isValidFilters()) {
+        await search()
+      } else {
+        let result = await findAll()
+        context.setPageCount(Math.ceil(result.length / context.limit))
+        result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
+        context.setFruits(result)
+      }
+    })()
+  }, [context.page, context.limit]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -109,6 +137,17 @@ export default function Header() {
           >
             FRUITYVICE
           </Typography>
+          <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selectedLimit}
+              label="Limite"
+              onChange={handleSelectChange}
+          >
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={30}>30</MenuItem>
+          </Select>
           <RadioGroup
               row
               aria-labelledby="demo-radio-buttons-group-label"
@@ -122,7 +161,7 @@ export default function Header() {
           </RadioGroup>
           {searchEnabled && (
               <Search>
-                <IconButton aria-label="pesquisar" onClick={search}>
+                <IconButton aria-label="pesquisar" onClick={handleSearch}>
                   <SearchIcon />
                 </IconButton>
 
