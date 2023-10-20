@@ -1,15 +1,14 @@
-import React, { useEffect, useState, createContext} from 'react';
-import FruitCard from './FruitCard'; // Importe o componente FruitCard
+import React, {useEffect, useState, createContext, useContext} from 'react';
+import FruitCard from './FruitCard';
+import {findAll} from "../service/FruitService";
+import {AppContext} from "../App"; // Importe o componente FruitCard
 
 const FruitContext = createContext();
 const ListaFrutas = () => {
-    const [fruits, setFruits] = useState([]);
-
+    const context = useContext(AppContext)
     useEffect(() => {
         (async () => {
-            const resp = await fetch('https://corsproxy.io/?https://www.fruityvice.com/api/fruit/all');
-            const data = await resp.json()
-            setFruits(data)
+            context.setFruits(await findAll())
         })()
     }, []);
   
@@ -17,7 +16,7 @@ const ListaFrutas = () => {
         <div>
           <h1>Lista de Frutas</h1>
           <div>
-            {fruits.map((fruit) => (
+            {context.fruits.map((fruit) => (
                 <FruitContext.Provider value={{fruit}}>
                     <FruitCard key={fruit.id}/>
                 </FruitContext.Provider>

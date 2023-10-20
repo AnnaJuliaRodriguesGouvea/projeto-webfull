@@ -6,6 +6,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
+import {Button, FormControlLabel, IconButton, Radio, RadioGroup, TextField} from "@mui/material";
+import {findAll} from "../service/FruitService";
+import {useContext} from "react";
+import {FruitContext} from "./ListaFrutas";
+import {AppContext} from "../App";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,6 +55,48 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header() {
+  const context = useContext(AppContext)
+  const [searchEnabled, setSearchEnabled] = React.useState(false);
+  const [selectedRadio, setSelectedRadio] = React.useState('');
+  const [searchText, setSearchText] = React.useState('');
+
+  const handleRadioChange = (event) => {
+    setSelectedRadio(event.target.value);
+    setSearchEnabled(true);
+  };
+
+  const handleInputChange = (event) => {
+    setSearchText(event.target.value.toLowerCase());
+  };
+
+  const isValidFilters = () => {
+    return !(selectedRadio === '' || searchText === '')
+  }
+
+  const search = async () => {
+    if(isValidFilters()) {
+      let result = await findAll()
+      switch (selectedRadio) {
+        case 'genero':
+          result = result.filter((fruit) => fruit.genus.toLowerCase().includes(searchText));
+          break;
+        case 'familia':
+          result = result.filter((fruit) => fruit.family.toLowerCase().includes(searchText));
+          break;
+        case 'ordem':
+          result = result.filter((fruit) => fruit.order.toLowerCase().includes(searchText));
+          break;
+      }
+      if (result.length === 0) {
+        console.log("Erro")
+        //Apresentar erro de dados nao encontrados
+      }
+      context.setFruits(result)
+      return result
+    }
+   //Apresentar erro de validacao
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'green' }}>
@@ -62,15 +109,31 @@ export default function Header() {
           >
             FRUITYVICE
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Procurar..."
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+          <RadioGroup
+              row
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={selectedRadio}
+              onChange={handleRadioChange}
+          >
+            <FormControlLabel value="genero" control={<Radio />} label="Gênero" />
+            <FormControlLabel value="familia" control={<Radio />} label="Família" />
+            <FormControlLabel value="ordem" control={<Radio />} label="Ordem" />
+          </RadioGroup>
+          {searchEnabled && (
+              <Search>
+                <IconButton aria-label="pesquisar" onClick={search}>
+                  <SearchIcon />
+                </IconButton>
+
+                <StyledInputBase
+                    placeholder="Procurar..."
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={searchText}
+                    onChange={handleInputChange}
+                />
+              </Search>
+          )}
         </Toolbar>
       </AppBar>
     </Box>
