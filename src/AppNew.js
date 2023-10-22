@@ -1,6 +1,7 @@
 import HeaderNew from "./components/HeaderNew";
 import Introduction from "./components/Introduction";
 import Container from "@mui/material/Container";
+import InputSearch from "./components/InputSearch";
 const App = () => {
     return (
         <div>
@@ -9,11 +10,11 @@ const App = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: 'center'
             }}>
                 <Introduction/>
+                <InputSearch/>
             </Container>
-
         </div>
     )
 }

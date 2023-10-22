@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import FoodBankIcon from '@mui/icons-material/FoodBank';
 
-function HeaderNew() {
+const HeaderNew = () => {
     return (
         <AppBar position="static" sx={{ backgroundColor: '#125C13', height: '80px', justifyContent: 'center' }} >
             <Container maxWidth="xl" sx={{
