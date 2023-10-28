@@ -19,16 +19,6 @@ const App = () => {
         setPageCount(pageCount);
     }, [pageCount]);
 
-    useEffect(() => {
-        (async () => {
-            let result = await findAll()
-            setPageCount(Math.ceil(result.length / limit))
-            result = result.slice((page - 1) * limit, (limit * page))
-            setFruits(result)
-
-        })()
-    }, [limit, page]);
-
     return (
         <div>
             <AppContext.Provider value={{

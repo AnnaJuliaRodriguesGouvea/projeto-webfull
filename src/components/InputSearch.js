@@ -2,6 +2,7 @@ import * as React from 'react';
 import SearchIcon from "@mui/icons-material/Search";
 import Container from "@mui/material/Container";
 import {
+    Alert,
     FormControl,
     FormControlLabel,
     IconButton,
@@ -20,6 +21,9 @@ const InputSearch = () => {
     const [selectedRadio, setSelectedRadio] = useState('');
     const [searchText, setSearchText] = useState('');
     const [selectedLimit, setSelectedLimit] = useState(6);
+    const [error, setError] = useState(false)
+    const [textError, setTextError] = useState("")
+    const [alertError, setAlertError] = useState(false)
 
     const handleRadioChange = (event) => {
         setSelectedRadio(event.target.value);
@@ -46,6 +50,9 @@ const InputSearch = () => {
 
     const search = async () => {
         if(isValidFilters()) {
+            setError(false)
+            setAlertError(false)
+            setTextError("")
             let result = await findAll()
             switch (selectedRadio) {
                 case 'nome':
@@ -64,13 +71,19 @@ const InputSearch = () => {
 
             if (result.length === 0) {
                 //Apresentar erro de dados nao encontrados
+                setAlertError(true)
+                // return result
             }
             context.setPageCount(Math.ceil(result.length / context.limit))
             result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
             context.setFruits(result)
             return result
+        } else {
+            console.log("TESTE")
         }
         //Apresentar erro de validacao
+        setError(true)
+        setTextError("Preencha os campos acima")
     }
 
     useEffect(() => {
@@ -121,8 +134,8 @@ const InputSearch = () => {
                 </FormControl>
             </Container>
             <TextField
-                error
-                helperText="Incorrect entry."
+                error={error}
+                helperText={textError}
                 placeholder="Pesquisar..."
                 value={searchText}
                 onChange={handleInputChange}
@@ -139,6 +152,9 @@ const InputSearch = () => {
                 }}
                 sx={{ width: '45%' }}
             />
+            {alertError ? (
+                <Alert sx={{marginTop: '1%'}} severity="warning">Não foram encontrados dados para essa busca</Alert>
+            ): null}
         </Container>
     );
 }
