@@ -6,14 +6,86 @@ import {
     FormControlLabel,
     IconButton,
     InputAdornment, InputLabel,
-    MenuItem, NativeSelect,
+    NativeSelect,
     Radio,
     RadioGroup,
-    Select,
     TextField
 } from "@mui/material";
+import {useContext, useEffect, useState} from "react";
+import {AppContext} from "../App";
+import {findAll} from "../service/FruitService";
 
 const InputSearch = () => {
+    const context = useContext(AppContext)
+    const [selectedRadio, setSelectedRadio] = useState('');
+    const [searchText, setSearchText] = useState('');
+    const [selectedLimit, setSelectedLimit] = useState(6);
+
+    const handleRadioChange = (event) => {
+        setSelectedRadio(event.target.value);
+    };
+
+    const handleSelectChange = (event) => {
+        setSelectedLimit(event.target.value)
+        context.setLimit(event.target.value)
+        context.setPage(1)
+    }
+
+    const handleInputChange = (event) => {
+        setSearchText(event.target.value.toLowerCase());
+    };
+
+    const handleSearch = async () => {
+        context.setPage(1)
+        await search()
+    }
+
+    const isValidFilters = () => {
+        return !(selectedRadio === '' || searchText === '' || context.limit < 1 || context.page < 1)
+    }
+
+    const search = async () => {
+        if(isValidFilters()) {
+            let result = await findAll()
+            switch (selectedRadio) {
+                case 'nome':
+                    result = result.filter((fruit) => fruit.name.toLowerCase().includes(searchText));
+                    break;
+                case 'genero':
+                    result = result.filter((fruit) => fruit.genus.toLowerCase().includes(searchText));
+                    break;
+                case 'familia':
+                    result = result.filter((fruit) => fruit.family.toLowerCase().includes(searchText));
+                    break;
+                case 'ordem':
+                    result = result.filter((fruit) => fruit.order.toLowerCase().includes(searchText));
+                    break;
+            }
+
+            if (result.length === 0) {
+                //Apresentar erro de dados nao encontrados
+            }
+            context.setPageCount(Math.ceil(result.length / context.limit))
+            result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
+            context.setFruits(result)
+            return result
+        }
+        //Apresentar erro de validacao
+    }
+
+    useEffect(() => {
+        (async () => {
+            if(isValidFilters()) {
+                await search()
+            } else {
+                let result = await findAll()
+                context.setPageCount(Math.ceil(result.length / context.limit))
+                result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
+                context.setFruits(result)
+            }
+        })()
+    }, [context.page, context.limit]);
+
     return (
         <Container sx={{ display: 'flex', flexDirection: 'column' , justifyContent: 'center', alignItems: 'center', margin: "2%" }}>
             <Container sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
@@ -21,8 +93,8 @@ const InputSearch = () => {
                     row
                     aria-labelledby="demo-radio-buttons-group-label"
                     name="radio-buttons-group"
-                    // value={selectedRadio}
-                    // onChange={handleRadioChange}
+                    value={selectedRadio}
+                    onChange={handleRadioChange}
                     sx={{ marginBottom: '1%' }}
                 >
                     <FormControlLabel value="nome" control={<Radio />} label="Nome" />
@@ -35,7 +107,8 @@ const InputSearch = () => {
                         Itens Por Página
                     </InputLabel>
                     <NativeSelect
-                        defaultValue={5}
+                        value={selectedLimit}
+                        onChange={handleSelectChange}
                         inputProps={{
                             name: 'limit',
                             id: 'uncontrolled-native',
@@ -50,10 +123,15 @@ const InputSearch = () => {
             <TextField
                 error
                 helperText="Incorrect entry."
+                placeholder="Pesquisar..."
+                value={searchText}
+                onChange={handleInputChange}
                 InputProps={{
                     endAdornment: (
-                        <InputAdornment>
-                            <IconButton>
+                        <InputAdornment position="end">
+                            <IconButton
+                                onClick={handleSearch}
+                            >
                                 <SearchIcon />
                             </IconButton>
                         </InputAdornment>
