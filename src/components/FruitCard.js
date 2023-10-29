@@ -2,18 +2,24 @@ import Card from "@mui/material/Card";
 import {Button, CardActions, CardMedia, Grid} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import React, {useState} from "react";
+import React, {useContext} from "react";
 import {createPortal} from "react-dom";
 import NutritionCard from "./NutritionCard";
+import {AppContext} from "../App";
 
 const FruitCard = (props) => {
-    const [showModal, setShowModal] = useState(false);
+    const context = useContext(AppContext)
     const {
         name,
         genus,
         family,
         order
     } = props.fruit;
+
+    const styleText = {
+        fontFamily: 'Playpen Sans',
+        fontWeight: '300'
+    }
 
     return (
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
@@ -31,27 +37,20 @@ const FruitCard = (props) => {
                     }}>
                         {name}
                     </Typography>
-                    <Typography sx={{
-                        fontFamily: 'Playpen Sans',
-                        fontWeight: '300'
-                    }}>
+                    <Typography sx={styleText}>
                         <strong>Gênero:</strong> {genus}
                     </Typography>
-                    <Typography sx={{
-                        fontFamily: 'Playpen Sans',
-                        fontWeight: '300'
-                    }}>
+                    <Typography sx={styleText}>
                         <strong>Família:</strong> {family}
                     </Typography>
-                    <Typography sx={{
-                        fontFamily: 'Playpen Sans',
-                        fontWeight: '300'
-                    }}>
+                    <Typography sx={styleText}>
                         <strong>Ordem:</strong> {order}
                     </Typography>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center' }}>
-                    <Button sx={{
+                    <Button
+                        disabled={context.showModal}
+                        sx={{
                         backgroundColor: '#125C13',
                         color: '#FFF',
                         fontFamily: 'Playpen Sans',
@@ -64,12 +63,16 @@ const FruitCard = (props) => {
                             backgroundColor: '#FFF',
                             color: '#125C13'
                         }
-                    }} onClick={() => setShowModal(true)}>
+                    }} onClick={() => {
+                        context.setShowModal(true)
+                    }}>
                         Informação Nutricional
                     </Button>
                 </CardActions>
-                {showModal && createPortal(
-                    <NutritionCard nutritions={props.fruit.nutritions} onClose={() => setShowModal(false)} />,
+                {context.showModal && createPortal(
+                    <NutritionCard
+                        nutritions={props.fruit.nutritions}
+                        onClose={context.onClose} />,
                     document.body
                 )}
             </Card>

@@ -1,30 +1,63 @@
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import React from "react";
+import {Button} from "@mui/material";
 
 const NutritionCard = (props) => {
     const { carbohydrates, protein, fat, calories, sugar } = props.nutritions
+    const styleText = {
+        fontFamily: 'Playpen Sans',
+        fontWeight: '300',
+        fontSize: "18px",
+    }
+
     return (
         <Container sx={{
             display: 'flex',
-            justifyContent: 'space-evenly',
+            flexDirection: 'column',
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            height: '50%',
+            width: '50%',
+            justifyContent: 'center',
             alignItems: 'center',
-            boxShadow: 'rgba(100, 100, 111, 0.3) 0px 7px 29px 0px',
-            backgroundColor: 'white',
-            border: '2px solid rgb(240, 240, 240)',
-            borderRadius: '12px',
-            position:  'absolute',
-            width: '250px',
-            top: '70px',
-            left: 'calc(50% - 125px)',
-            bottom: '70px'
+            transform: "translate(-50%, -50%)",
+            textAlign: 'center',
+            backgroundColor: "#E8E1D9",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
         }}>
-            <ul>
-              <li>Carbohydrates: {carbohydrates}g</li>
-              <li>Protein: {protein}g</li>
-              <li>Fat: {fat}g</li>
-              <li>Calories: {calories}</li>
-              <li>Sugar: {sugar}g</li>
-            </ul>
-            <button onClick={props.onClose}>Close</button>
+            <Typography sx={styleText}>
+                <strong>Carboidratos:</strong> {carbohydrates}g
+            </Typography>
+            <Typography sx={styleText}>
+                <strong>Proteína:</strong> {protein}g
+            </Typography>
+            <Typography sx={styleText}>
+                <strong>Gordura:</strong> {fat}g
+            </Typography>
+            <Typography sx={styleText}>
+                <strong>Calorias:</strong> {calories}kcal
+            </Typography>
+            <Typography sx={styleText}>
+                <strong>Açúcar:</strong> {sugar}g
+            </Typography>
+            <Button
+                variant="contained"
+                onClick={props.onClose}
+                sx={{
+                    marginTop: "16px",
+                    backgroundColor: '#125C13',
+                    width: '50%',
+                    '&:hover': {
+                        backgroundColor: '#E8E1D9',
+                        color: '#125C13'
+                    }
+                }}>
+                Fechar
+            </Button>
         </Container>
     );
 }

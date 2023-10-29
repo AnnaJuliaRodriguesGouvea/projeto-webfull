@@ -5,7 +5,6 @@ import InputSearch from "./components/InputSearch";
 import FruitCard from "./components/FruitCard";
 import React, {createContext, useEffect, useState} from "react";
 import {Grid, Pagination} from "@mui/material";
-import {findAll} from "./service/FruitService";
 
 export const AppContext = createContext();
 
@@ -14,18 +13,29 @@ const App = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(6);
     const [pageCount, setPageCount] = useState(1);
+    const [showModal, setShowModal] = useState(false);
+
+    const onClose = () => {
+        setShowModal(false)
+    }
+    const handleOnClick = () => {
+        if (showModal)
+            onClose()
+    }
 
     useEffect(() => {
         setPageCount(pageCount);
     }, [pageCount]);
 
     return (
-        <div>
+        <div onClick={handleOnClick}>
             <AppContext.Provider value={{
                 fruits, setFruits,
                 page, setPage,
                 limit, setLimit,
-                pageCount, setPageCount
+                pageCount, setPageCount,
+                showModal, setShowModal,
+                onClose
             }}>
                 <Header/>
                 <Container sx={{

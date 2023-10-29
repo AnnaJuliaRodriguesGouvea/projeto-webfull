@@ -108,12 +108,12 @@ const InputSearch = () => {
                     name="radio-buttons-group"
                     value={selectedRadio}
                     onChange={handleRadioChange}
-                    sx={{ marginBottom: '1%' }}
+                    sx={{ marginBottom: '1%'}}
                 >
-                    <FormControlLabel value="nome" control={<Radio />} label="Nome" />
-                    <FormControlLabel value="genero" control={<Radio />} label="Gênero" />
-                    <FormControlLabel value="familia" control={<Radio />} label="Família" />
-                    <FormControlLabel value="ordem" control={<Radio />} label="Ordem" />
+                    <FormControlLabel value="nome" control={<Radio />} label="Nome"/>
+                    <FormControlLabel value="genero" control={<Radio />} label="Gênero"/>
+                    <FormControlLabel value="familia" control={<Radio />} label="Família"/>
+                    <FormControlLabel value="ordem" control={<Radio />} label="Ordem"/>
                 </RadioGroup>
                 <FormControl sx={{ marginBottom: '2%', width: '10%' }}>
                     <InputLabel variant="standard" htmlFor="uncontrolled-native">
