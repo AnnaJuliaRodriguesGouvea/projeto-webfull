@@ -3,6 +3,7 @@ import Introduction from "./components/Introduction";
 import Container from "@mui/material/Container";
 import InputSearch from "./components/InputSearch";
 import FruitCard from "./components/FruitCard";
+import Login from "./components/Login";
 import React, {createContext, useEffect, useState} from "react";
 import {Grid, Pagination} from "@mui/material";
 
@@ -14,6 +15,7 @@ const App = () => {
     const [limit, setLimit] = useState(6);
     const [pageCount, setPageCount] = useState(1);
     const [showModal, setShowModal] = useState(false);
+    const [authenticated, setAuthenticated] = useState(false);
 
     const onClose = () => {
         setShowModal(false)
@@ -35,47 +37,54 @@ const App = () => {
                 limit, setLimit,
                 pageCount, setPageCount,
                 showModal, setShowModal,
+                authenticated, setAuthenticated,
                 onClose
             }}>
-                <Header/>
-                <Container sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <Introduction/>
-                    <InputSearch/>
-                </Container>
-                <Container sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginY: '2%'
-                }}>
-                    <Grid container spacing={3}>
-                        {fruits.map((fruit) => (
-                            <FruitCard key={fruit.id} fruit={fruit}/>
-                        ))}
-                    </Grid>
-                </Container>
-                <Container sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginY: '2%'
-                }}>
-                    <Pagination
-                        count={pageCount}
-                        page={page}
-                        onChange={(event, newPage) => setPage(newPage)}
-                        variant="outlined"
-                        shape="rounded"
-                        color="primary"
-                    />
-                </Container>
+                {authenticated ? (
+                    <>
+                        <Header/>
+                        <Container sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <Introduction/>
+                            <InputSearch/>
+                        </Container>
+                        <Container sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginY: '2%'
+                        }}>
+                            <Grid container spacing={3}>
+                                {fruits.map((fruit) => (
+                                    <FruitCard key={fruit.id} fruit={fruit}/>
+                                ))}
+                            </Grid>
+                        </Container>
+                        <Container sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginY: '2%'
+                        }}>
+                            <Pagination
+                                count={pageCount}
+                                page={page}
+                                onChange={(event, newPage) => setPage(newPage)}
+                                variant="outlined"
+                                shape="rounded"
+                                color="primary"
+                            />
+                        </Container>
+                    </>
+                ) : (
+                    <Login/>
+                )}
             </AppContext.Provider>
         </div>
     )
