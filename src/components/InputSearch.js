@@ -23,7 +23,7 @@ const InputSearch = () => {
     const [selectedLimit, setSelectedLimit] = useState(6);
     const [error, setError] = useState(false)
     const [textError, setTextError] = useState("")
-    const [alertError, setAlertError] = useState(false)
+    // const [alertError, setAlertError] = useState(false)
 
     const handleRadioChange = (event) => {
         setSelectedRadio(event.target.value);
@@ -49,21 +49,32 @@ const InputSearch = () => {
     }
 
     const setResult = (result) => {
+        console.log("TESTE", result)
         if(result && result.status === 200) {
-            context.setPageCount(result.data.pageCount)
-            context.setFruits(result.data.rows)
+            if(result.data && result.data.rows) {
+                context.setPageCount(result.data.pageCount)
+                context.setFruits(result.data.rows)
+            } else {
+                context.setAlertError(true)
+                context.setPageCount(1)
+                context.setFruits([])
+            }
         } else if (result && result.status === 204) {
-            setAlertError(true)
+            context.setAlertError(true)
             context.setPageCount(1)
             context.setFruits([])
         }
     }
 
+    const clearError = () => {
+        setError(false)
+        context.setAlertError(false)
+        setTextError("")
+    }
+
     const search = async () => {
         if(isValidFilters()) {
-            setError(false)
-            setAlertError(false)
-            setTextError("")
+            clearError()
             try {
                 let filter = null
                 switch (selectedRadio) {
@@ -86,8 +97,13 @@ const InputSearch = () => {
                 let result = await getFruits(context.limit, context.page, filter, searchText)
                 setResult(result)
             } catch (err) {
-                setError(true)
-                setTextError(err.data)
+                if(err.data.toLowerCase().includes("token")) {
+                    context.setAuthenticated(false)
+                    localStorage.clear()
+                } else {
+                    setError(true)
+                    setTextError(err.data)
+                }
             }
         } else {
             setError(true)
@@ -101,11 +117,18 @@ const InputSearch = () => {
                 await search()
             } else {
                 try {
+                    clearError()
                     let result = await getFruits(context.limit, context.page, null, null)
+                    console.log(result)
                     setResult(result)
                 } catch (err) {
-                    setError(true)
-                    setTextError(err.data)
+                    if(err.data.toLowerCase().includes("token")) {
+                        context.setAuthenticated(false)
+                        localStorage.clear()
+                    } else {
+                        setError(true)
+                        setTextError(err.data)
+                    }
                 }
             }
         })()
@@ -164,7 +187,7 @@ const InputSearch = () => {
                 }}
                 sx={{ width: '45%' }}
             />
-            {alertError ? (
+            {context.alertError ? (
                 <Alert sx={{marginTop: '1%'}} severity="warning">Não foram encontrados dados para essa busca</Alert>
             ): null}
         </Container>

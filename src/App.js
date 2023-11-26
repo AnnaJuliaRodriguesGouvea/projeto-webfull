@@ -12,13 +12,20 @@ const App = () => {
     const [showNutritionCard, setShowNutritionCard] = useState(false);
     const [showInsertFruit, setShowInsertFruit] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
+    const [alertError, setAlertError] = useState(false)
 
     useEffect(() => {
         setPageCount(pageCount);
     }, [pageCount]);
 
     useEffect(() => {
-    }, [authenticated, localStorage]);
+    }, [authenticated]);
+
+    useEffect(() => {
+      if(!authenticated && localStorage.getItem("token")) {
+          setAuthenticated(true)
+      }
+    },[])
 
     return (
         <div>
@@ -29,9 +36,10 @@ const App = () => {
                 pageCount, setPageCount,
                 showNutritionCard, setShowNutritionCard,
                 showInsertFruit, setShowInsertFruit,
-                authenticated, setAuthenticated
+                authenticated, setAuthenticated,
+                alertError, setAlertError
             }}>
-                {localStorage.getItem("token") ? (
+                {authenticated ? (
                     <Page/>
                 ) : (
                     <Login/>

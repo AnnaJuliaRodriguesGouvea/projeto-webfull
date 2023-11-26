@@ -1,9 +1,9 @@
 import {Button, TextField} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import {AppContext} from "../App";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import {insertFruit} from "../service/fruitService";
+import {getFruits, insertFruit} from "../service/fruitService";
 
 const styleButton = {
     marginTop: "16px",
@@ -82,14 +82,34 @@ const InsertFruit = () => {
             clearErrors()
 
             const result = await insertFruit(fruit);
+            console.log(result)
             if(result && result.status === 201) {
                 // TODO - Enviar notificacao
-                handleClear();
-                context.setShowInsertFruit(false)
+                try {
+                    let result = await getFruits(context.limit, context.page, null, null)
+                    if(result && result.status === 200) {
+                        context.setPageCount(result.data.pageCount)
+                        context.setFruits(result.data.rows)
+                        context.setAlertError(false)
+                        handleClear();
+                        context.setShowInsertFruit(false)
+                    } else if (result && result.status === 204) {
+                        context.setAlertError(true)
+                        context.setPageCount(1)
+                        context.setFruits([])
+                    }
+                } catch (err) {
+                    if(err.data.toLowerCase().includes("token")) {
+                        context.setAuthenticated(false)
+                        localStorage.clear()
+                    } else {
+                        context.setAlertError(true)
+                    }
+                }
             }
         } catch (err) {
             if(err.data.toLowerCase().includes("token")) {
-                context.setAuthenticated(true)
+                context.setAuthenticated(false)
                 localStorage.clear()
             }
             if(err.data.toLowerCase().includes("nome"))
@@ -113,13 +133,13 @@ const InsertFruit = () => {
         }
     };
 
-    const handleOnClickInside = (event) => {
+    const handleOnClickInside = useCallback((event) => {
         if (event.target.closest('#insertFruitModal')) {
             return;
         }
 
         context.setShowInsertFruit(false);
-    };
+    }, [context]);
 
     useEffect(() => {
         document.addEventListener("mousedown", handleOnClickInside);

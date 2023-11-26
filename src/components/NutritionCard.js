@@ -1,6 +1,6 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import React, {useContext, useEffect} from "react";
+import React, {useCallback, useContext, useEffect} from "react";
 import {Button} from "@mui/material";
 import {AppContext} from "../App";
 
@@ -13,12 +13,13 @@ const NutritionCard = (props) => {
     const context = useContext(AppContext)
     const { carbohydrates, protein, fat, calories, sugar } = props.nutritions
 
-    const handleOnClickInside = (event) => {
+    const handleOnClickInside = useCallback((event) => {
         if (event.target.closest('#nutritionCardModal')) {
             return;
         }
+
         context.setShowNutritionCard(false);
-    };
+    }, [context]);
 
     useEffect(() => {
         document.addEventListener("mousedown", handleOnClickInside);
