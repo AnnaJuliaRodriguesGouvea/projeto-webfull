@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import {AppContext} from "../App";
-import {findAll} from "../service/FruitService";
+import {getFruits} from "../service/fruitService";
 
 const InputSearch = () => {
     const context = useContext(AppContext)
@@ -48,42 +48,51 @@ const InputSearch = () => {
         return !(selectedRadio === '' || searchText === '' || context.limit < 1 || context.page < 1)
     }
 
+    const setResult = (result) => {
+        if(result && result.status === 200) {
+            context.setPageCount(result.data.pageCount)
+            context.setFruits(result.data.rows)
+        } else if (result && result.status === 204) {
+            setAlertError(true)
+            context.setPageCount(1)
+            context.setFruits([])
+        }
+    }
+
     const search = async () => {
         if(isValidFilters()) {
             setError(false)
             setAlertError(false)
             setTextError("")
-            let result = await findAll()
-            switch (selectedRadio) {
-                case 'nome':
-                    result = result.filter((fruit) => fruit.name.toLowerCase().includes(searchText));
-                    break;
-                case 'genero':
-                    result = result.filter((fruit) => fruit.genus.toLowerCase().includes(searchText));
-                    break;
-                case 'familia':
-                    result = result.filter((fruit) => fruit.family.toLowerCase().includes(searchText));
-                    break;
-                case 'ordem':
-                    result = result.filter((fruit) => fruit.order.toLowerCase().includes(searchText));
-                    break;
-            }
+            try {
+                let filter = null
+                switch (selectedRadio) {
+                    case 'nome':
+                        filter = "name"
+                        break;
+                    case 'genero':
+                        filter = "genus"
+                        break;
+                    case 'familia':
+                        filter = "family"
+                        break;
+                    case 'ordem':
+                        filter = "order"
+                        break;
+                    default:
+                        filter = null
+                }
 
-            if (result.length === 0) {
-                //Apresentar erro de dados nao encontrados
-                setAlertError(true)
-                // return result
+                let result = await getFruits(context.limit, context.page, filter, searchText)
+                setResult(result)
+            } catch (err) {
+                setError(true)
+                setTextError(err.data)
             }
-            context.setPageCount(Math.ceil(result.length / context.limit))
-            result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
-            context.setFruits(result)
-            return result
         } else {
-            console.log("TESTE")
+            setError(true)
+            setTextError("Preencha os campos acima")
         }
-        //Apresentar erro de validacao
-        setError(true)
-        setTextError("Preencha os campos acima")
     }
 
     useEffect(() => {
@@ -91,10 +100,13 @@ const InputSearch = () => {
             if(isValidFilters()) {
                 await search()
             } else {
-                let result = await findAll()
-                context.setPageCount(Math.ceil(result.length / context.limit))
-                result = result.slice((context.page - 1) * context.limit, (context.limit * context.page))
-                context.setFruits(result)
+                try {
+                    let result = await getFruits(context.limit, context.page, null, null)
+                    setResult(result)
+                } catch (err) {
+                    setError(true)
+                    setTextError(err.data)
+                }
             }
         })()
     }, [context.page, context.limit]);

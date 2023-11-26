@@ -7,6 +7,11 @@ import {createPortal} from "react-dom";
 import NutritionCard from "./NutritionCard";
 import {AppContext} from "../App";
 
+const styleText = {
+    fontFamily: 'Playpen Sans',
+    fontWeight: '300'
+}
+
 const FruitCard = (props) => {
     const context = useContext(AppContext)
     const {
@@ -15,11 +20,6 @@ const FruitCard = (props) => {
         family,
         order
     } = props.fruit;
-
-    const styleText = {
-        fontFamily: 'Playpen Sans',
-        fontWeight: '300'
-    }
 
     return (
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
@@ -64,15 +64,13 @@ const FruitCard = (props) => {
                             color: '#125C13'
                         }
                     }} onClick={() => {
-                        context.setShowModal(true)
+                        context.setShowNutritionCard(true)
                     }}>
                         Informação Nutricional
                     </Button>
                 </CardActions>
-                {context.showModal && createPortal(
-                    <NutritionCard
-                        nutritions={props.fruit.nutritions}
-                        onClose={context.onClose} />,
+                {context.showNutritionCard && createPortal(
+                    <NutritionCard nutritions={props.fruit.nutritions}/>,
                     document.body
                 )}
             </Card>

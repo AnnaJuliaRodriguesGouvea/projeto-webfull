@@ -1,11 +1,6 @@
-import Header from "./components/Header";
-import Introduction from "./components/Introduction";
-import Container from "@mui/material/Container";
-import InputSearch from "./components/InputSearch";
-import FruitCard from "./components/FruitCard";
 import Login from "./components/Login";
 import React, {createContext, useEffect, useState} from "react";
-import {Grid, Pagination} from "@mui/material";
+import Page from "./components/Page";
 
 export const AppContext = createContext();
 
@@ -14,74 +9,30 @@ const App = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(6);
     const [pageCount, setPageCount] = useState(1);
-    const [showModal, setShowModal] = useState(false);
+    const [showNutritionCard, setShowNutritionCard] = useState(false);
+    const [showInsertFruit, setShowInsertFruit] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
-
-    const onClose = () => {
-        setShowModal(false)
-    }
-    const handleOnClick = () => {
-        if (showModal)
-            onClose()
-    }
 
     useEffect(() => {
         setPageCount(pageCount);
     }, [pageCount]);
 
+    useEffect(() => {
+    }, [authenticated, localStorage]);
+
     return (
-        <div onClick={handleOnClick}>
+        <div>
             <AppContext.Provider value={{
                 fruits, setFruits,
                 page, setPage,
                 limit, setLimit,
                 pageCount, setPageCount,
-                showModal, setShowModal,
-                authenticated, setAuthenticated,
-                onClose
+                showNutritionCard, setShowNutritionCard,
+                showInsertFruit, setShowInsertFruit,
+                authenticated, setAuthenticated
             }}>
-                {authenticated ? (
-                    <>
-                        <Header/>
-                        <Container sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            <Introduction/>
-                            <InputSearch/>
-                        </Container>
-                        <Container sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginY: '2%'
-                        }}>
-                            <Grid container spacing={3}>
-                                {fruits.map((fruit) => (
-                                    <FruitCard key={fruit.id} fruit={fruit}/>
-                                ))}
-                            </Grid>
-                        </Container>
-                        <Container sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginY: '2%'
-                        }}>
-                            <Pagination
-                                count={pageCount}
-                                page={page}
-                                onChange={(event, newPage) => setPage(newPage)}
-                                variant="outlined"
-                                shape="rounded"
-                                color="primary"
-                            />
-                        </Container>
-                    </>
+                {localStorage.getItem("token") ? (
+                    <Page/>
                 ) : (
                     <Login/>
                 )}

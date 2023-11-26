@@ -1,18 +1,35 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import {Button} from "@mui/material";
+import {AppContext} from "../App";
 
+const styleText = {
+    fontFamily: 'Playpen Sans',
+    fontWeight: '300',
+    fontSize: "18px",
+}
 const NutritionCard = (props) => {
+    const context = useContext(AppContext)
     const { carbohydrates, protein, fat, calories, sugar } = props.nutritions
-    const styleText = {
-        fontFamily: 'Playpen Sans',
-        fontWeight: '300',
-        fontSize: "18px",
-    }
+
+    const handleOnClickInside = (event) => {
+        if (event.target.closest('#nutritionCardModal')) {
+            return;
+        }
+        context.setShowNutritionCard(false);
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleOnClickInside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOnClickInside);
+        };
+    }, [handleOnClickInside]);
 
     return (
-        <Container sx={{
+        <Container id="nutritionCardModal" sx={{
             display: 'flex',
             flexDirection: 'column',
             position: "fixed",
@@ -46,7 +63,7 @@ const NutritionCard = (props) => {
             </Typography>
             <Button
                 variant="contained"
-                onClick={props.onClose}
+                onClick={() => {context.setShowNutritionCard(false)}}
                 sx={{
                     marginTop: "16px",
                     backgroundColor: '#125C13',

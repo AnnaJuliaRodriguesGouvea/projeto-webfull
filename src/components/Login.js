@@ -2,16 +2,31 @@ import React, {useContext, useState} from "react";
 import Container from "@mui/material/Container";
 import {Button, Paper, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
+import {login} from "../service/authenticationService";
 import {AppContext} from "../App";
 
 const Login = () => {
-    const { setAuthenticated } = useContext(AppContext);
+    const context = useContext(AppContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorEmail, setErrorEmail] = useState('')
+    const [errorPassword, setErrorPassword] = useState('')
 
-    const handleLogin = () => {
-        // Implemente a lógica de autenticação aqui
-        setAuthenticated(true)
+    const handleLogin = async () => {
+        try {
+            setErrorEmail(null)
+            setErrorPassword(null)
+            const result = await login(email, password);
+            if(result && result.status === 200) {
+                localStorage.setItem("token", result.data)
+                context.setAuthenticated(true)
+            }
+        } catch (err) {
+            if(err.data.toLowerCase().includes("email"))
+                setErrorEmail(err.data)
+            if(err.data.toLowerCase().includes("senha"))
+                setErrorPassword(err.data)
+        }
     };
 
     return (
@@ -29,6 +44,8 @@ const Login = () => {
                     Login
                 </Typography>
                 <TextField
+                    error={Boolean(errorEmail)}
+                    helperText={errorEmail}
                     label="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -36,6 +53,8 @@ const Login = () => {
                     sx={{ marginBottom: '20px' }}
                 />
                 <TextField
+                    error={Boolean(errorPassword)}
+                    helperText={errorPassword}
                     label="Password"
                     type="password"
                     value={password}
