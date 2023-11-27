@@ -2,10 +2,9 @@ import Card from "@mui/material/Card";
 import {Button, CardActions, CardMedia, Grid} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import React, {useContext} from "react";
+import React, {useState} from "react";
 import {createPortal} from "react-dom";
 import NutritionCard from "./NutritionCard";
-import {AppContext} from "../App";
 
 const styleText = {
     fontFamily: 'Playpen Sans',
@@ -13,7 +12,8 @@ const styleText = {
 }
 
 const FruitCard = (props) => {
-    const context = useContext(AppContext)
+    const [showNutritionCard, setShowNutritionCard] = useState(false);
+
     const {
         name,
         genus,
@@ -49,7 +49,7 @@ const FruitCard = (props) => {
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center' }}>
                     <Button
-                        disabled={context.showModal}
+                        disabled={showNutritionCard}
                         sx={{
                         backgroundColor: '#125C13',
                         color: '#FFF',
@@ -64,13 +64,13 @@ const FruitCard = (props) => {
                             color: '#125C13'
                         }
                     }} onClick={() => {
-                        context.setShowNutritionCard(true)
+                        setShowNutritionCard(true)
                     }}>
                         Informação Nutricional
                     </Button>
                 </CardActions>
-                {context.showNutritionCard && createPortal(
-                    <NutritionCard nutritions={props.fruit.nutritions}/>,
+                {showNutritionCard && createPortal(
+                    <NutritionCard nutritions={props.fruit.nutritions} setShowNutritionCard={setShowNutritionCard}/>,
                     document.body
                 )}
             </Card>

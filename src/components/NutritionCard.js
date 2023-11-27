@@ -1,8 +1,7 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import React, {useCallback, useContext, useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {Button} from "@mui/material";
-import {AppContext} from "../App";
 
 const styleText = {
     fontFamily: 'Playpen Sans',
@@ -10,7 +9,6 @@ const styleText = {
     fontSize: "18px",
 }
 const NutritionCard = (props) => {
-    const context = useContext(AppContext)
     const { carbohydrates, protein, fat, calories, sugar } = props.nutritions
 
     const handleOnClickInside = useCallback((event) => {
@@ -18,8 +16,8 @@ const NutritionCard = (props) => {
             return;
         }
 
-        context.setShowNutritionCard(false);
-    }, [context]);
+        props.setShowNutritionCard(false);
+    }, [props]);
 
     useEffect(() => {
         document.addEventListener("mousedown", handleOnClickInside);
@@ -64,7 +62,7 @@ const NutritionCard = (props) => {
             </Typography>
             <Button
                 variant="contained"
-                onClick={() => {context.setShowNutritionCard(false)}}
+                onClick={() => {props.setShowNutritionCard(false)}}
                 sx={{
                     marginTop: "16px",
                     backgroundColor: '#125C13',

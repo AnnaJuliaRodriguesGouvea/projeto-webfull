@@ -82,7 +82,6 @@ const InsertFruit = () => {
             clearErrors()
 
             const result = await insertFruit(fruit);
-            console.log(result)
             if(result && result.status === 201) {
                 // TODO - Enviar notificacao
                 try {

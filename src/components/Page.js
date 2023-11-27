@@ -6,7 +6,7 @@ import {Grid, Pagination} from "@mui/material";
 import FruitCard from "./FruitCard";
 import {createPortal} from "react-dom";
 import InsertFruit from "./InsertFruit";
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import {AppContext} from "../App";
 
 const Page = () => {

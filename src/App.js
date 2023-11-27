@@ -9,7 +9,6 @@ const App = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(6);
     const [pageCount, setPageCount] = useState(1);
-    const [showNutritionCard, setShowNutritionCard] = useState(false);
     const [showInsertFruit, setShowInsertFruit] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
     const [alertError, setAlertError] = useState(false)
@@ -34,7 +33,6 @@ const App = () => {
                 page, setPage,
                 limit, setLimit,
                 pageCount, setPageCount,
-                showNutritionCard, setShowNutritionCard,
                 showInsertFruit, setShowInsertFruit,
                 authenticated, setAuthenticated,
                 alertError, setAlertError

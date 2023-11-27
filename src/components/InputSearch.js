@@ -49,7 +49,6 @@ const InputSearch = () => {
     }
 
     const setResult = (result) => {
-        console.log("TESTE", result)
         if(result && result.status === 200) {
             if(result.data && result.data.rows) {
                 context.setPageCount(result.data.pageCount)
@@ -119,7 +118,7 @@ const InputSearch = () => {
                 try {
                     clearError()
                     let result = await getFruits(context.limit, context.page, null, null)
-                    console.log(result)
+
                     setResult(result)
                 } catch (err) {
                     if(err.data.toLowerCase().includes("token")) {
