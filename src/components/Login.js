@@ -1,6 +1,6 @@
 import React, {useContext, useState} from "react";
 import Container from "@mui/material/Container";
-import {Button, Paper, TextField} from "@mui/material";
+import {Alert, Button, Paper, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {login} from "../service/authenticationService";
 import {AppContext} from "../App";
@@ -26,6 +26,8 @@ const Login = () => {
                 setErrorEmail(err.data)
             if(err.data.toLowerCase().includes("senha"))
                 setErrorPassword(err.data)
+            if(err.data.toLowerCase().includes("solicitações"))
+                setErrorEmail(err.data)
         }
     };
 
