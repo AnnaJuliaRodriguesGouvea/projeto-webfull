@@ -12,6 +12,8 @@ const App = () => {
     const [showInsertFruit, setShowInsertFruit] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
     const [alertError, setAlertError] = useState(false)
+    const [socket, setSocket] = useState(null)
+    const [notifications, setNotifications] = useState([])
 
     useEffect(() => {
         setPageCount(pageCount);
@@ -35,7 +37,9 @@ const App = () => {
                 pageCount, setPageCount,
                 showInsertFruit, setShowInsertFruit,
                 authenticated, setAuthenticated,
-                alertError, setAlertError
+                alertError, setAlertError,
+                socket, setSocket,
+                notifications, setNotifications
             }}>
                 {authenticated ? (
                     <Page/>

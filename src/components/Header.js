@@ -16,6 +16,7 @@ const Header = () => {
     const handleLogout = () => {
         context.setAuthenticated(false)
         localStorage.clear()
+        context.socket.close()
     }
     const handleAdd = () => {
         context.setShowInsertFruit(true)

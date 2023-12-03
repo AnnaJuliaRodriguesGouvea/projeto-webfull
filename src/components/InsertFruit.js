@@ -83,7 +83,6 @@ const InsertFruit = () => {
 
             const result = await insertFruit(fruit);
             if(result && result.status === 201) {
-                // TODO - Enviar notificacao
                 try {
                     let result = await getFruits(context.limit, context.page, null, null)
                     if(result && result.status === 200) {

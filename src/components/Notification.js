@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import FruitCard from "./FruitCard";
+import {AppContext} from "../App";
+import Container from "@mui/material/Container";
 
 const Notification = () => {
+    const context = useContext(AppContext)
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -39,10 +42,9 @@ const Notification = () => {
                     },
                 }}
             >
-                <Typography sx={{ p: 2 }}>
-                    {/*TODO - Trazer as notificações*/}
-                    Notificações de inclusão de frutas...
-                </Typography>
+                {context.notifications && context.notifications.map((notification) => (
+                    <Typography sx={{ p: 2 }}>{notification}</Typography>
+                ))}
             </Popover>
         </>
     );

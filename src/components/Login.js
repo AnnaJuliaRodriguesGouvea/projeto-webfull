@@ -20,8 +20,20 @@ const Login = () => {
             if(result && result.status === 200) {
                 localStorage.setItem("token", result.data)
                 context.setAuthenticated(true)
+
+                const socket = new WebSocket('ws://localhost:8080',
+                    ["access_token", result.data]
+                );
+
+                socket.addEventListener('message', (msg) => {
+                    console.log('received: %s', msg.data);
+                    context.notifications.push(msg.data)
+                })
+
+                context.setSocket(socket)
             }
         } catch (err) {
+            console.log(err)
             if(err.data.toLowerCase().includes("email"))
                 setErrorEmail(err.data)
             if(err.data.toLowerCase().includes("senha"))
