@@ -1,6 +1,6 @@
 import React, {useContext, useState} from "react";
 import Container from "@mui/material/Container";
-import {Alert, Button, Paper, TextField} from "@mui/material";
+import {Button, Paper, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {login} from "../service/authenticationService";
 import {AppContext} from "../App";

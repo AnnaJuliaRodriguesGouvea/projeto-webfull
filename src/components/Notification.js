@@ -2,9 +2,7 @@ import React, {useContext, useState} from 'react';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import FruitCard from "./FruitCard";
 import {AppContext} from "../App";
-import Container from "@mui/material/Container";
 
 const Notification = () => {
     const context = useContext(AppContext)
